@@ -380,7 +380,7 @@ const dpBriefmarkeEbayOhneLogo = {
         rotation: 0
     },
     scale: 4.1666,
-    width: 820,
+    width: 830,
     crop(outputCanvas, ctx, image) {
         ctx.drawImage(image,
             150, 240, 820, 680, 0, 0, 820, 680
