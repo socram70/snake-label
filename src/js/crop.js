@@ -4,7 +4,7 @@ import { PDFDocument } from 'pdf-lib';
 import { getDocument } from 'pdfjs-dist';
 import 'pdfjs-dist/build/pdf.worker.mjs';
 import { saveAs } from 'file-saver';
-import { loadConfig, saveConfig, printLabel } from './print';
+import { loadConfig, saveConfig, printLabel, testConnection } from './print';
 
 const debug = false;
 debug && (downloadPageIMG.hidden = false);
@@ -28,6 +28,26 @@ const printerUrlInput = document.getElementById('printer-url');
 printerUrlInput.value = loadConfig();
 document.getElementById('save-printer-url').addEventListener('click', () => {
     saveConfig(printerUrlInput.value.trim());
+});
+
+document.getElementById('test-printer-url').addEventListener('click', async () => {
+    saveConfig(printerUrlInput.value.trim());
+    const btn = document.getElementById('test-printer-url');
+    const status = document.getElementById('print-status');
+    btn.disabled = true;
+    status.textContent = 'Verbindung wird geprüft\u2026';
+    status.className = 'mt-2 text-center text-sm text-gray-700';
+
+    const result = await testConnection();
+
+    if (result.success) {
+        status.textContent = 'Verbindung erfolgreich.';
+        status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
+    } else {
+        status.textContent = result.error || 'Verbindung fehlgeschlagen.';
+        status.className = 'mt-2 text-center text-sm text-red-700';
+    }
+    btn.disabled = false;
 });
 
 // Print button

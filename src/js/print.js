@@ -19,6 +19,30 @@ function rotatePng(canvas) {
     return new Promise((resolve) => rotated.toBlob(resolve, 'image/png'));
 }
 
+export async function testConnection() {
+    const url = loadConfig();
+    if (!url) {
+        return { success: false, error: 'Bitte Drucker-URL konfigurieren.' };
+    }
+
+    const baseUrl = url.replace(/\/+$/, '');
+    try {
+        const response = await fetch(baseUrl + '/labeldesigner/api/font/styles', { method: 'GET' });
+        if (response.ok) {
+            return { success: true };
+        }
+        return { success: false, error: `Server antwortet mit HTTP ${response.status}.` };
+    } catch (e) {
+        if (e instanceof TypeError) {
+            return {
+                success: false,
+                error: 'Verbindung fehlgeschlagen. Ist die URL korrekt und CORS aktiviert?',
+            };
+        }
+        throw e;
+    }
+}
+
 export async function printLabel(canvas) {
     const url = loadConfig();
     if (!url) {
@@ -28,11 +52,18 @@ export async function printLabel(canvas) {
     const blob = await rotatePng(canvas);
     const formData = new FormData();
     formData.append('image', blob, 'label.png');
+    formData.append('print_type', 'image');
+    formData.append('image_mode', 'grayscale');
     formData.append('label_size', '62');
+    formData.append('margin_top', '0');
+    formData.append('margin_bottom', '0');
+    formData.append('margin_left', '0');
+    formData.append('margin_right', '0');
 
+    const baseUrl = url.replace(/\/+$/, '');
     let response;
     try {
-        response = await fetch(url + '/api/print/image', {
+        response = await fetch(baseUrl + '/labeldesigner/api/print', {
             method: 'POST',
             body: formData,
         });
