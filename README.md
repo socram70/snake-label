@@ -19,7 +19,7 @@ Download the latest `snake-label-vX.X.X.html` from the **[Releases](../../releas
 Run a local instance served by nginx:
 
 ```bash
-docker run -d -p 8080:80 ghcr.io/typingbeaver/snake-label:latest
+docker run -d -p 8080:80 ghcr.io/socram70/snake-label:latest
 ```
 
 Then open [http://localhost:8080](http://localhost:8080).
@@ -27,7 +27,7 @@ Then open [http://localhost:8080](http://localhost:8080).
 To run a specific version:
 
 ```bash
-docker run -d -p 8080:80 ghcr.io/typingbeaver/snake-label:v0.18.0
+docker run -d -p 8080:80 ghcr.io/socram70/snake-label:v0.18.0
 ```
 
 Available tags and the full changelog are listed on the [Releases](../../releases) and [Packages](../../pkgs/container/snake-label) pages.
