@@ -27,10 +27,32 @@ Then open [http://localhost:8012](http://localhost:8012).
 To run a specific version:
 
 ```bash
-docker run -d -p 8012:80 ghcr.io/socram70/snake-label:v0.18.0
+docker run -d -p 8012:80 ghcr.io/socram70/snake-label:v0.19.0
 ```
 
 Available tags and the full changelog are listed on the [Releases](../../releases) and [Packages](../../pkgs/container/snake-label) pages.
+
+### Docker Compose
+
+To run snake-label standalone:
+
+```bash
+docker compose up -d
+```
+
+To run snake-label **together with [brother_ql_web](https://github.com/socram70/brother_ql_web)** for direct printing from the browser:
+
+1. Copy the example config and adjust it to your printer:
+   ```bash
+   cp brother_ql_web_instance/application.py.example brother_ql_web_instance/application.py
+   # edit brother_ql_web_instance/application.py
+   ```
+2. Start both services:
+   ```bash
+   docker compose -f docker-compose.qlweb.yml up -d
+   ```
+
+This gives you snake-label on [http://localhost:8012](http://localhost:8012) and brother_ql_web on [http://localhost:8013](http://localhost:8013). In the snake-label UI, set the printer URL to `http://localhost:8013` to enable direct printing.
 
 ## Features and benefits
 - **smaller and handier**: sticky labels instead of giant plain paper pages
