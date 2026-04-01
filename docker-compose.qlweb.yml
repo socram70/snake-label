@@ -10,7 +10,8 @@ services:
     ports:
       - "8013:8013"
     volumes:
-      - ./brother_ql_web_instance:/app/instance:ro
+      # Copy brother_ql_web_instance/application.py.example to application.py and adjust before starting
+      - ./brother_ql_web_instance/application.py:/app/instance/application.py:ro
     restart: unless-stopped
     # For USB printers, uncomment and adjust the line below:
     # devices:
