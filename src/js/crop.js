@@ -40,7 +40,7 @@ async function checkPrinterConnection() {
     configSection.hidden = result.success;
 
     if (!result.success) {
-        status.textContent = result.error || 'Kein Drucker erreichbar. Bitte URL konfigurieren.';
+        status.textContent = result.error || 'Printer not reachable. Please configure the URL.';
         status.className = 'mt-2 text-center text-sm text-red-700';
     }
     updatePrintButtonState();
@@ -61,13 +61,13 @@ document.getElementById('test-printer-url').addEventListener('click', async () =
     const btn = document.getElementById('test-printer-url');
     const status = document.getElementById('print-status');
     btn.disabled = true;
-    status.textContent = 'Verbindung wird geprüft\u2026';
+    status.textContent = 'Checking connection\u2026';
     status.className = 'mt-2 text-center text-sm text-gray-700';
 
     const result = await checkPrinterConnection();
 
     if (result.success) {
-        status.textContent = 'Verbindung erfolgreich.';
+        status.textContent = 'Connection successful.';
         status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
     }
     btn.disabled = false;
@@ -78,13 +78,13 @@ document.getElementById('printLabelBtn').addEventListener('click', async () => {
     const btn = document.getElementById('printLabelBtn');
     const status = document.getElementById('print-status');
     btn.disabled = true;
-    status.textContent = 'Druckauftrag wird gesendet\u2026';
+    status.textContent = 'Sending print job\u2026';
     status.className = 'mt-2 text-center text-sm text-gray-700';
 
     const result = await printLabel(outputCanvas);
 
     if (result.success) {
-        status.textContent = 'Druckauftrag erfolgreich gesendet.';
+        status.textContent = 'Print job sent successfully.';
         status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
     } else {
         status.textContent = result.error || 'Unbekannter Fehler.';

@@ -22,7 +22,7 @@ function rotatePng(canvas) {
 export async function testConnection() {
     const url = loadConfig();
     if (!url) {
-        return { success: false, error: 'Bitte Drucker-URL konfigurieren.' };
+        return { success: false, error: 'Please configure the printer URL.' };
     }
 
     const baseUrl = url.replace(/\/+$/, '');
@@ -36,7 +36,7 @@ export async function testConnection() {
         if (e instanceof TypeError) {
             return {
                 success: false,
-                error: 'Verbindung fehlgeschlagen. Ist die URL korrekt und CORS aktiviert?',
+                error: 'Connection failed. Is the URL correct and CORS enabled?',
             };
         }
         throw e;
@@ -46,7 +46,7 @@ export async function testConnection() {
 export async function printLabel(canvas) {
     const url = loadConfig();
     if (!url) {
-        return { success: false, error: 'Bitte Drucker-URL konfigurieren.' };
+        return { success: false, error: 'Please configure the printer URL.' };
     }
 
     const blob = await rotatePng(canvas);
@@ -71,7 +71,7 @@ export async function printLabel(canvas) {
         if (e instanceof TypeError) {
             return {
                 success: false,
-                error: 'Verbindung fehlgeschlagen. Ist die URL korrekt und CORS in brother_ql_web aktiviert?',
+                error: 'Connection failed. Is the URL correct and CORS enabled in brother_ql_web?',
             };
         }
         throw e;
@@ -81,7 +81,7 @@ export async function printLabel(canvas) {
     try {
         json = await response.json();
     } catch {
-        return { success: false, error: `Unerwartete Antwort vom Drucker (HTTP ${response.status}).` };
+        return { success: false, error: `Unexpected response from printer (HTTP ${response.status}).` };
     }
 
     return json;
