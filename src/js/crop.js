@@ -93,6 +93,11 @@ document.getElementById('printLabelBtn').addEventListener('click', async () => {
     btn.disabled = false;
 });
 
+document.getElementById('toggle-printer-config').addEventListener('click', () => {
+    const configSection = document.getElementById('printer-config');
+    configSection.hidden = !configSection.hidden;
+});
+
 // Background connection check on page load
 checkPrinterConnection();
 
