@@ -1,0 +1,6 @@
+services:
+  snake-label:
+    image: ghcr.io/socram70/snake-label:latest
+    ports:
+      - "8012:80"
+    restart: unless-stopped

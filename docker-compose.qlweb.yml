@@ -1,0 +1,17 @@
+services:
+  snake-label:
+    image: ghcr.io/socram70/snake-label:latest
+    ports:
+      - "8012:80"
+    restart: unless-stopped
+
+  brother-ql-web:
+    image: ghcr.io/socram70/brother_ql_web:latest
+    ports:
+      - "8013:8013"
+    volumes:
+      - ./brother_ql_web_instance:/app/instance:ro
+    restart: unless-stopped
+    # For USB printers, uncomment and adjust the line below:
+    # devices:
+    #   - /dev/usb/lp0:/dev/usb/lp0
