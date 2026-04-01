@@ -1,7 +1,7 @@
 const CONFIG_KEY = 'brotherQlWebUrl';
 
 export function loadConfig() {
-    return localStorage.getItem(CONFIG_KEY) || '';
+    return localStorage.getItem(CONFIG_KEY) || 'http://localhost:8013';
 }
 
 export function saveConfig(url) {

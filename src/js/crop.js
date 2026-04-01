@@ -23,11 +23,37 @@ downloadLabel.addEventListener('click', saveLabel, false);
 downloadLabelIMG.addEventListener('click', savePNG, false);
 downloadPageIMG.addEventListener('click', savePagePNG, false);
 
+// Printer state
+let printerConnected = false;
+let labelReady = false;
+
+function updatePrintButtonState() {
+    document.getElementById('printLabelBtn').disabled = !(printerConnected && labelReady);
+}
+
+async function checkPrinterConnection() {
+    const result = await testConnection();
+    const configSection = document.getElementById('printer-config');
+    const status = document.getElementById('print-status');
+
+    printerConnected = result.success;
+    configSection.hidden = result.success;
+
+    if (!result.success) {
+        status.textContent = result.error || 'Kein Drucker erreichbar. Bitte URL konfigurieren.';
+        status.className = 'mt-2 text-center text-sm text-red-700';
+    }
+    updatePrintButtonState();
+    return result;
+}
+
 // Printer config
 const printerUrlInput = document.getElementById('printer-url');
 printerUrlInput.value = loadConfig();
-document.getElementById('save-printer-url').addEventListener('click', () => {
+
+document.getElementById('save-printer-url').addEventListener('click', async () => {
     saveConfig(printerUrlInput.value.trim());
+    await checkPrinterConnection();
 });
 
 document.getElementById('test-printer-url').addEventListener('click', async () => {
@@ -38,14 +64,11 @@ document.getElementById('test-printer-url').addEventListener('click', async () =
     status.textContent = 'Verbindung wird geprüft\u2026';
     status.className = 'mt-2 text-center text-sm text-gray-700';
 
-    const result = await testConnection();
+    const result = await checkPrinterConnection();
 
     if (result.success) {
         status.textContent = 'Verbindung erfolgreich.';
         status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
-    } else {
-        status.textContent = result.error || 'Verbindung fehlgeschlagen.';
-        status.className = 'mt-2 text-center text-sm text-red-700';
     }
     btn.disabled = false;
 });
@@ -69,6 +92,9 @@ document.getElementById('printLabelBtn').addEventListener('click', async () => {
     }
     btn.disabled = false;
 });
+
+// Background connection check on page load
+checkPrinterConnection();
 
 function savePNG() {
     saveAs(
@@ -199,8 +225,8 @@ function readFile() {
             reader.addEventListener('loadend', () => {
                 labelArrayBuffer = reader.result;
                 view.classList.remove('invisible');
-                document.getElementById('printLabelBtn').disabled = false;
-                document.getElementById('print-status').textContent = '';
+                labelReady = true;
+                updatePrintButtonState();
             });
             reader.readAsArrayBuffer(blob);
         }, 'image/png');
