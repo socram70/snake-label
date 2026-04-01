@@ -56,6 +56,29 @@
                                 </label>
                                 <select id="label-type"
                                     class="w-full border-gray-900 py-2 pl-3 pr-10 focus:border-green-600 focus:outline-none focus:ring-green-600 focus:ring-2">
+                                    <optgroup label="deutsche_post">
+                                        <option value="dp-briefmarke-ebay-ohne-ebay-logo">
+                                            briefmarke_ebay_ohne_logo | 62x110mm
+                                        </option>                                        
+                                        <option value="dp-briefmarke-ebay">
+                                            briefmarke_ebay | 62x120mm
+                                        </option>
+                                        <option value="dp-briefmarke">
+                                            briefmarke | 62x40mm
+                                        </option>
+                                        <option value="dp-briefmarke-short">
+                                            briefmarke_short | 62x30mm
+                                        </option>
+                                        <option value="dp-briefmarke-adresse">
+                                            briefmarke_adresse | 62x80mm
+                                        </option>
+                                        <option value="dp-briefmarke-bogen">
+                                            briefmarke_bogen | 62x40mm
+                                        </option>
+                                        <option value="dp-briefmarke-bogen-short">
+                                            briefmarke_bogen_short | 62x25mm
+                                        </option>
+                                    </optgroup>
                                     <optgroup label="dhl">
                                         <option value="dhl-privat">
                                             dhl_privat | 62x145mm
@@ -71,23 +94,6 @@
                                         </option>
                                         <option value="dhl-return-connect">
                                             dhl_return_connect | 62x160mm
-                                        </option>
-                                    </optgroup>
-                                    <optgroup label="deutsche_post">
-                                        <option value="dp-briefmarke">
-                                            briefmarke | 62x40mm
-                                        </option>
-                                        <option value="dp-briefmarke-short">
-                                            briefmarke_short | 62x30mm
-                                        </option>
-                                        <option value="dp-briefmarke-adresse">
-                                            briefmarke_adresse | 62x80mm
-                                        </option>
-                                        <option value="dp-briefmarke-bogen">
-                                            briefmarke_bogen | 62x40mm
-                                        </option>
-                                        <option value="dp-briefmarke-bogen-short">
-                                            briefmarke_bogen_short | 62x25mm
                                         </option>
                                     </optgroup>
                                     <optgroup label="hermes">
@@ -213,10 +219,35 @@
                         class="bg-amber-400 px-4 py-2 text-sm font-medium text-gray-900 shadow-sm hover:font-bold focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
                         Save as PNG Image
                     </button>
+                    <button id="printLabelBtn" disabled
+                        class="bg-green-400 px-4 py-2 text-sm font-medium text-gray-900 shadow-sm hover:font-bold focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        Print
+                    </button>
                     <button id="downloadPageIMG" hidden
                         class="border-amber-400 border-4 text-amber-400 px-4 py-2 text-sm font-medium shadow-sm hover:font-bold focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
                         Save uncropped PNG Image
                     </button>
+                </div>
+
+                <!-- Print Status -->
+                <div id="print-status" class="mt-2 text-center text-sm"></div>
+
+                <!-- Printer Configuration -->
+                <div class="mt-4 flex justify-center">
+                    <div class="flex items-center gap-2 text-sm">
+                        <label for="printer-url" class="font-medium whitespace-nowrap">Drucker-URL:</label>
+                        <input id="printer-url" type="url"
+                            placeholder="http://192.168.1.100:8013"
+                            class="border border-gray-900 px-2 py-1 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+                        <button id="save-printer-url"
+                            class="bg-green-400 px-3 py-2 text-sm font-medium text-gray-900 shadow-sm hover:font-bold focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
+                            Speichern
+                        </button>
+                        <button id="test-printer-url"
+                            class="bg-amber-400 px-3 py-2 text-sm font-medium text-gray-900 shadow-sm hover:font-bold focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
+                            Verbindung testen
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>

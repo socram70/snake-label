@@ -1,14 +1,36 @@
 # [![`snake_label`](/img/snake_label_header.webp)](https://snake-label.de)
 Converts large format shipping labels to 62mm `snake_labels` for label printers e. g. Brother QL printers. - And this without sending your labels to a server, instead your browser will do all the work!
 
-> **Note**
-> Feel free to use the hosted online version: **[[ snake-label.de ]](https://snake-label.de)**
->
-> If you want to use `snake_label` offline instead, download the latest offline package and open `index.html` in your favorite browser:
-> **[[ Download snake_label_offline ]](https://github.com/typingbeaver/snake-label/archive/refs/heads/offline.zip)**
-
 > **Warning**
 > Use this tool at your own risk. These are non-official labels which could get declined by the operator.
+
+## Usage
+
+### Online
+
+Open **[snake-label.de](https://snake-label.de)** in your browser — no installation required.
+
+### Offline (single HTML file)
+
+Download the latest `snake-label-vX.X.X.html` from the **[Releases](../../releases)** page and open it locally in any browser.
+
+### Docker
+
+Run a local instance served by nginx:
+
+```bash
+docker run -d -p 8080:80 ghcr.io/typingbeaver/snake-label:latest
+```
+
+Then open [http://localhost:8080](http://localhost:8080).
+
+To run a specific version:
+
+```bash
+docker run -d -p 8080:80 ghcr.io/typingbeaver/snake-label:v0.18.0
+```
+
+Available tags and the full changelog are listed on the [Releases](../../releases) and [Packages](../../pkgs/container/snake-label) pages.
 
 ## Features and benefits
 - **smaller and handier**: sticky labels instead of giant plain paper pages
@@ -17,6 +39,7 @@ Converts large format shipping labels to 62mm `snake_labels` for label printers 
 - **without backend**: crops completely locally via JS (keep your address safe!)
 - optimized for 300dpi
 - optimised PNGs for direct printing via [brother_ql](https://github.com/pklaus/brother_ql)
+- **direct print**: send labels directly to your Brother QL printer via [brother_ql_web](https://github.com/pklaus/brother_ql_web)
 
 
 Currently available labels
@@ -93,6 +116,18 @@ International returns are most probably better on a real paper sheet/A5 Label.
 
 ![Sample Image](/samples/deutsche_post/briefmarke_bogen_short.png) \
 [Sample PDF](/samples/deutsche_post/briefmarke_bogen_short.pdf)
+
+#### `briefmarke_ebay`
+- **Note:** *eBay Briefmarke (mit eBay-Logo)*
+
+<!-- ![Sample Image]() -->
+<!-- [Sample PDF]() -->
+
+#### `briefmarke_ebay_ohne_logo`
+- **Note:** *eBay Briefmarke (ohne eBay-Logo)*
+
+<!-- ![Sample Image]() -->
+<!-- [Sample PDF]() -->
 
 ### Hermes
 

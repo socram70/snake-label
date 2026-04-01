@@ -4,6 +4,7 @@ import { PDFDocument } from 'pdf-lib';
 import { getDocument } from 'pdfjs-dist';
 import 'pdfjs-dist/build/pdf.worker.mjs';
 import { saveAs } from 'file-saver';
+import { loadConfig, saveConfig, printLabel, testConnection } from './print';
 
 const debug = false;
 debug && (downloadPageIMG.hidden = false);
@@ -11,7 +12,8 @@ console.log('Application loaded. debug =', debug);
 
 const viewImg = document.getElementById('view');
 let label,
-    labelArrayBuffer;
+    labelArrayBuffer,
+    outputCanvas;
 var labelData = {
     image: new Image(),
 };
@@ -20,6 +22,53 @@ convertLabel.addEventListener('click', readFile, false);
 downloadLabel.addEventListener('click', saveLabel, false);
 downloadLabelIMG.addEventListener('click', savePNG, false);
 downloadPageIMG.addEventListener('click', savePagePNG, false);
+
+// Printer config
+const printerUrlInput = document.getElementById('printer-url');
+printerUrlInput.value = loadConfig();
+document.getElementById('save-printer-url').addEventListener('click', () => {
+    saveConfig(printerUrlInput.value.trim());
+});
+
+document.getElementById('test-printer-url').addEventListener('click', async () => {
+    saveConfig(printerUrlInput.value.trim());
+    const btn = document.getElementById('test-printer-url');
+    const status = document.getElementById('print-status');
+    btn.disabled = true;
+    status.textContent = 'Verbindung wird geprüft\u2026';
+    status.className = 'mt-2 text-center text-sm text-gray-700';
+
+    const result = await testConnection();
+
+    if (result.success) {
+        status.textContent = 'Verbindung erfolgreich.';
+        status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
+    } else {
+        status.textContent = result.error || 'Verbindung fehlgeschlagen.';
+        status.className = 'mt-2 text-center text-sm text-red-700';
+    }
+    btn.disabled = false;
+});
+
+// Print button
+document.getElementById('printLabelBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('printLabelBtn');
+    const status = document.getElementById('print-status');
+    btn.disabled = true;
+    status.textContent = 'Druckauftrag wird gesendet\u2026';
+    status.className = 'mt-2 text-center text-sm text-gray-700';
+
+    const result = await printLabel(outputCanvas);
+
+    if (result.success) {
+        status.textContent = 'Druckauftrag erfolgreich gesendet.';
+        status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
+    } else {
+        status.textContent = result.error || 'Unbekannter Fehler.';
+        status.className = 'mt-2 text-center text-sm text-red-700';
+    }
+    btn.disabled = false;
+});
 
 function savePNG() {
     saveAs(
@@ -120,8 +169,8 @@ function readFile() {
         await new Promise(r => setTimeout(r, 1e2)); // small delay helps
 
         // generate output canvas
-        const outputCanvas = document.createElement('canvas'),
-            ctx = outputCanvas.getContext('2d');
+        outputCanvas = document.createElement('canvas');
+        const ctx = outputCanvas.getContext('2d');
         outputCanvas.width = label.width;
         outputCanvas.height = 696; // 59mm print width for QL-Printers
 
@@ -150,6 +199,8 @@ function readFile() {
             reader.addEventListener('loadend', () => {
                 labelArrayBuffer = reader.result;
                 view.classList.remove('invisible');
+                document.getElementById('printLabelBtn').disabled = false;
+                document.getElementById('print-status').textContent = '';
             });
             reader.readAsArrayBuffer(blob);
         }, 'image/png');
