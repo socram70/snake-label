@@ -51,6 +51,13 @@ async function checkPrinterConnection() {
 const printerUrlInput = document.getElementById('printer-url');
 printerUrlInput.value = loadConfig();
 
+// Allow pre-setting the printer URL via ?printerUrl=http://...
+const printerUrlParam = new URLSearchParams(window.location.search).get('printerUrl');
+if (printerUrlParam) {
+    printerUrlInput.value = printerUrlParam;
+    saveConfig(printerUrlParam);
+}
+
 document.getElementById('save-printer-url').addEventListener('click', async () => {
     saveConfig(printerUrlInput.value.trim());
     await checkPrinterConnection();
@@ -62,13 +69,13 @@ document.getElementById('test-printer-url').addEventListener('click', async () =
     const status = document.getElementById('print-status');
     btn.disabled = true;
     status.textContent = 'Checking connection\u2026';
-    status.className = 'mt-2 text-center text-sm text-gray-700';
+    status.className = 'mt-2 text-center text-sm text-gray-700 dark:text-gray-300';
 
     const result = await checkPrinterConnection();
 
     if (result.success) {
         status.textContent = 'Connection successful.';
-        status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
+        status.className = 'mt-2 text-center text-sm text-green-700 dark:text-green-400 font-medium';
     }
     btn.disabled = false;
 });
@@ -79,13 +86,13 @@ document.getElementById('printLabelBtn').addEventListener('click', async () => {
     const status = document.getElementById('print-status');
     btn.disabled = true;
     status.textContent = 'Sending print job\u2026';
-    status.className = 'mt-2 text-center text-sm text-gray-700';
+    status.className = 'mt-2 text-center text-sm text-gray-700 dark:text-gray-300';
 
     const result = await printLabel(outputCanvas);
 
     if (result.success) {
         status.textContent = 'Print job sent successfully.';
-        status.className = 'mt-2 text-center text-sm text-green-700 font-medium';
+        status.className = 'mt-2 text-center text-sm text-green-700 dark:text-green-400 font-medium';
     } else {
         status.textContent = result.error || 'Unbekannter Fehler.';
         status.className = 'mt-2 text-center text-sm text-red-700';
