@@ -62,6 +62,8 @@ This gives you snake-label on [http://localhost:8012](http://localhost:8012) and
 - optimized for 300dpi
 - optimised PNGs for direct printing via [brother_ql](https://github.com/pklaus/brother_ql)
 - **direct print**: send labels directly to your Brother QL printer via [brother_ql_web](https://github.com/pklaus/brother_ql_web)
+- **dark mode**: full dark mode support
+- **pre-set printer URL**: pass `?printerUrl=http://...` as a URL parameter to pre-configure the printer
 
 
 Currently available labels
@@ -145,12 +147,6 @@ International returns are most probably better on a real paper sheet/A5 Label.
 <!-- ![Sample Image]() -->
 <!-- [Sample PDF]() -->
 
-#### `briefmarke_ebay_ohne_logo`
-- **Note:** *eBay Briefmarke (ohne eBay-Logo)*
-
-<!-- ![Sample Image]() -->
-<!-- [Sample PDF]() -->
-
 ### Hermes
 
 #### `hermes_privat [v1.1.2]`
@@ -181,7 +177,7 @@ International returns are most probably better on a real paper sheet/A5 Label.
 
 
 #### `amazon_retoure [dhl]`
-- **Size:** 62x120mm
+- **Size:** 62x94mm
 - **Note:** *Converts displayed GIF Image `ShipperLabel.gif`. No PDF support!*
 
 <!-- ![Sample Image]() -->
