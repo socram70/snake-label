@@ -49,6 +49,10 @@ async function checkPrinterConnection() {
 
 // Printer config
 const printerUrlInput = document.getElementById('printer-url');
+const printerUrlParam = new URLSearchParams(window.location.search).get('printerUrl');
+if (printerUrlParam) {
+    saveConfig(printerUrlParam);
+}
 printerUrlInput.value = loadConfig();
 
 // Allow pre-setting the printer URL via ?printerUrl=http://...

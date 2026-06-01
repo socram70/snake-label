@@ -11,7 +11,6 @@ export default function (labelType) {
         case 'dp-briefmarke-bogen':  return dpBriefmarkeBogen;
         case 'dp-briefmarke-bogen-short':  return dpBriefmarkeBogenShort;
         case 'dp-briefmarke-ebay':  return dpBriefmarkeEbay;
-        case 'dp-briefmarke-ebay-ohne-ebay-logo':  return dpBriefmarkeEbayOhneLogo;
         case 'hermes-privat-v112': return hermesPrivatV112;
         case 'hermes-vinted-qr': return hermesVintedQR;
         case 'hermes-vinted-eu': return hermesVintedEU;
@@ -367,23 +366,7 @@ const dpBriefmarkeEbay = {
     width: 900,
     crop(outputCanvas, ctx, image) {
         ctx.drawImage(image,
-            150, 240, 1350, 680, 0, 0, 1350, 680
-        );
-    }
-
-};
-
-const dpBriefmarkeEbayOhneLogo = {
-    file: {
-        type: 'pdf',
-        page: 1,
-        rotation: 0
-    },
-    scale: 4.1666,
-    width: 830,
-    crop(outputCanvas, ctx, image) {
-        ctx.drawImage(image,
-            150, 240, 820, 680, 0, 0, 820, 680
+            170, 260, 1350, 680, 0, 0, 1350, 680
         );
     }
 
@@ -559,31 +542,36 @@ const amazonRetoureDhl = {
     file: {
         type: 'gif',
     },
-    width: 1346,    // 114mm (=> 120mm)
+
+    width: 1646,
+
     crop(outputCanvas, ctx, image) {
-        ctx.rotate(Math.PI / 2)
+        ctx.rotate(Math.PI / 2);
 
-        ctx.drawImage(image,   // Kopf Logo
-            15, 0, 80, 370,
-            0, -20, 80, -370);
-        ctx.drawImage(image,   // Adressdaten
-            0, 605, 580, 460,
-            80, 0, 580, -460);
+        ctx.drawImage(image,   // Kopf / DHL-Logo
+            110, 80, 80, 340,
+            0, -20, 80, -340);
 
-        ctx.beginPath(); ctx.moveTo(12, -470); ctx.lineTo(outputCanvas.height - 12, -470); ctx.stroke();
+        ctx.drawImage(image,   // Adressdaten inkl. komplettem Adresskasten
+            0, 450, 660, 685,
+            80, 0, 600, -685);
 
-        ctx.drawImage(image,   // Auftragsnummer
-            730, 150, 160, 800,
-            15, -520, 160, -800);
+        ctx.beginPath();
+        ctx.moveTo(12, -705);
+        ctx.lineTo(outputCanvas.height - 12, -705);
+        ctx.stroke();
 
-        let barcodeSizeX = 220,
-            barcodeSizeY = 600;
-        ctx.drawImage(image,   // Leitcode/Routingcode
-            1110, 280, barcodeSizeX, barcodeSizeY,
-            220, -620, barcodeSizeX, -barcodeSizeY);
-        ctx.drawImage(image,   // Identcode/Sendungsnummer
-            1540, 290, barcodeSizeX, barcodeSizeY,
-            465, -660, barcodeSizeX, -barcodeSizeY);
+        ctx.drawImage(image,   // Kundenreferenz inkl. Text über dem Barcode
+            675, 230, 315, 900,
+            10, -730, 200, -900);
+
+        ctx.drawImage(image,   // Leitcode/Routingcode inkl. Text über dem Barcode
+            1015, 300, 375, 840,
+            230, -750, 230, -840);
+
+        ctx.drawImage(image,   // Identcode inkl. Text über dem Barcode
+            1415, 390, 365, 760,
+            475, -770, 205, -760);
     }
 };
 
