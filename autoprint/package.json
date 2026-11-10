@@ -1,0 +1,12 @@
+{
+  "name": "snake-label-autoprint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Watches a folder for shipping label PDFs, converts them with snake-label crop definitions and prints them via brother_ql_web.",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.100",
+    "pdfjs-dist": "^5.4.54"
+  }
+}

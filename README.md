@@ -4,6 +4,18 @@ Converts large format shipping labels to 62mm `snake_labels` for label printers 
 > **Warning**
 > Use this tool at your own risk. These are non-official labels which could get declined by the operator.
 
+## What's in this repository
+
+Shipping labels and online stamps usually come as A4 PDFs meant for plain paper. `snake_label` crops
+the relevant parts (address, barcodes, codes) and rearranges them into a compact strip for 62mm
+endless tape — sharp enough to scan and as short as possible.
+
+| Part | What it does |
+|------|--------------|
+| **Web app** (`index.html`, `src/`) | Pick a PDF and the label type in the browser, preview, download as PNG/PDF or print directly. Runs entirely client-side. |
+| **Docker / Docker Compose** | Serves the web app via nginx, optionally together with [brother_ql_web](https://github.com/socram70/brother_ql_web) for direct printing. |
+| **[`autoprint/`](autoprint/)** | Background service for macOS, Linux and Windows: watches your downloads folder, recognizes stamps and parcel labels, converts and prints them automatically — no clicking. |
+
 ## Usage
 
 ### Online
@@ -54,6 +66,33 @@ To run snake-label **together with [brother_ql_web](https://github.com/socram70/
 
 This gives you snake-label on [http://localhost:8012](http://localhost:8012) and brother_ql_web on [http://localhost:8013](http://localhost:8013). In the snake-label UI, set the printer URL to `http://localhost:8013` to enable direct printing.
 
+### Automatic printing from the downloads folder
+
+[`autoprint/`](autoprint/) turns the manual "open snake-label, pick file, pick type, print" into
+"download the label — it comes out of the printer". It watches a folder (default `~/Downloads`),
+detects the label type, converts it with the same label definitions as the web app
+(`src/js/labels.js`) and sends it to brother_ql_web. Printed PDFs are moved to `printed/`.
+
+Currently recognized automatically:
+
+| PDF | Label type |
+|-----|------------|
+| Deutsche Post Internetmarke bought via eBay (A4) | `briefmarke_ebay` |
+| Deutsche Post Internetmarke with address (62x100mm) | `briefmarke_adresse` |
+| Deutsche Post Internetmarke without address (61x37mm) | `briefmarke` |
+| DHL parcel label, national (A4, DHL Online Frankierung / eBay) | `dhl_privat` |
+
+Everything else is left untouched. Requires Node.js 20+ and a reachable brother_ql_web instance:
+
+```bash
+cd autoprint
+./install-macos.sh                                             # macOS
+./install-linux.sh                                             # Linux (systemd)
+powershell -ExecutionPolicy Bypass -File install-windows.ps1   # Windows
+```
+
+See [`autoprint/README.md`](autoprint/README.md) for configuration, detection details and troubleshooting.
+
 ## Features and benefits
 - **smaller and handier**: sticky labels instead of giant plain paper pages
 - **as short as possible**: more labels for your money!
@@ -64,6 +103,7 @@ This gives you snake-label on [http://localhost:8012](http://localhost:8012) and
 - **direct print**: send labels directly to your Brother QL printer via [brother_ql_web](https://github.com/pklaus/brother_ql_web)
 - **dark mode**: full dark mode support
 - **pre-set printer URL**: pass `?printerUrl=http://...` as a URL parameter to pre-configure the printer
+- **automatic printing**: [`autoprint/`](autoprint/) prints stamps and parcel labels as soon as they are downloaded
 
 
 Currently available labels
@@ -122,7 +162,7 @@ International returns are most probably better on a real paper sheet/A5 Label.
 [Sample PDF](/samples/deutsche_post/briefmarke_short.pdf)
 
 #### `briefmarke_adresse`
-- **Size:** 62x80mm
+- **Size:** 62x82mm
 
 ![Sample Image](/samples/deutsche_post/briefmarke_adresse.png) \
 [Sample PDF](/samples/deutsche_post/briefmarke_adresse.pdf)
