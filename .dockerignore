@@ -1,0 +1,4 @@
+**/node_modules
+dist
+autoprint/config.json
+.git

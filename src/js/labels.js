@@ -331,11 +331,11 @@ const dpBriefmarkeAdresse = {
         rotation: 90
     },
     scale: 4.1666,
-    width: 874,    // 74mm (=> 80mm)
+    width: 898,    // 76mm (=> 82mm)
     crop(outputCanvas, ctx, image) {
         ctx.drawImage(image,
-            64, 18, 874, 696,
-            0, 0, 874, 696);
+            64, 18, 898, 696,
+            0, 0, 898, 696);
     }
 };
 

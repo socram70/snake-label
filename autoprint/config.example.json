@@ -1,0 +1,5 @@
+{
+    "printerUrl": "http://localhost:8013",
+    "watchDir": "~/Downloads",
+    "printedDir": "~/Downloads/printed"
+}
