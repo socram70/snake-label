@@ -8,6 +8,10 @@ and prints them on a Brother QL via the [brother_ql_web](https://github.com/socr
 After a successful print the PDF is moved to `~/Downloads/printed/`.
 PDFs that already exist when the watcher starts are ignored; unknown PDFs are left untouched.
 
+If the printer can't be reached (e.g. away from home without VPN), the label is kept and printed
+as soon as the printer answers again. Waiting labels are listed in `<printedDir>/.autoprint-pending.json`,
+so they are also printed after a restart. Delete the PDF to cancel a waiting label.
+
 ## Recognized labels
 
 | PDF                                                     | snake-label type        |
@@ -21,6 +25,7 @@ Detection lives in [`detect.js`](detect.js) and only uses the first page:
 
 - **Internetmarken** carry `Creator: Deutsche Post AG` / `Title: INTERNETMARKEN` in the PDF
   metadata; the page size (±3mm) then decides between the A4 eBay sheet and the two native formats.
+  Newer eBay sheets (`Creator: eBay Bulk Labels`) are recognized on A4 by the stamp ID followed by `IM`.
 - **DHL parcel labels** have no reliable metadata, so the page text is checked for
   `DHL Online Frankierung` or both `Leitcode` and `Identcode` on an A4 page. Letter-spaced text
   (`S e n d u n g s n u m m e r`) is normalized first. Labels mentioning `International` are skipped,

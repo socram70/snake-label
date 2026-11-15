@@ -17,7 +17,10 @@ export async function detectLabelType(pdf) {
     const isA4 = near(width, 210) && near(height, 297);
 
     const isInternetmarke = info?.Creator === 'Deutsche Post AG' || info?.Title === 'INTERNETMARKEN';
-    if (isInternetmarke) {
+    // eBay now generates the A4 stamp sheet itself ("eBay Bulk Labels"), so fall back to
+    // the stamp ID followed by the "IM" marker printed on the stamp
+    const hasInternetmarkeText = /A0[0-9A-F]{18}IM/.test(squashed);
+    if (isInternetmarke || (hasInternetmarkeText && isA4)) {
         if (isA4) return { type: 'dp-briefmarke-ebay', description: 'eBay Briefmarke (A4)' };
         if (near(width, 62) && near(height, 100)) return { type: 'dp-briefmarke-adresse', description: 'Deutsche Post Briefmarke mit Adresse' };
         if (near(width, 61) && near(height, 37)) return { type: 'dp-briefmarke', description: 'Deutsche Post Briefmarke' };

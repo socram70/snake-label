@@ -179,7 +179,27 @@ async function waitUntilStable(file, { interval = 500, checks = 3, timeout = 30_
     throw new Error('File did not finish writing in time.');
 }
 
-async function processFile(file) {
+// Labels waiting for the printer (e.g. away from home without VPN), persisted so they
+// survive a restart: filename -> file identity. Only used while watching.
+const pendingFile = path.join(printedDir, '.autoprint-pending.json');
+
+async function readPending() {
+    try {
+        return new Map(Object.entries(JSON.parse(await fs.readFile(pendingFile, 'utf8'))));
+    } catch {
+        return new Map();
+    }
+}
+
+async function updatePending(name, id) {
+    const pending = await readPending();
+    if ((pending.get(name) ?? null) === id) return;
+    if (id) pending.set(name, id); else pending.delete(name);
+    await fs.mkdir(printedDir, { recursive: true });
+    await fs.writeFile(pendingFile, JSON.stringify(Object.fromEntries(pending), null, 2));
+}
+
+async function processFile(file, { waitForReconnect = false } = {}) {
     const name = path.basename(file);
     if (!(await exists(file))) return; // already printed and moved by an earlier event
     await waitUntilStable(file);
@@ -202,12 +222,42 @@ async function processFile(file) {
             return;
         }
 
-        await sendToPrinter(canvas);
+        if (waitForReconnect) {
+            if (!(await sendWhenReachable(file, canvas, detected.description))) return;
+        } else {
+            await sendToPrinter(canvas);
+        }
         const target = await moveToPrinted(file);
         log(`print  ${name}: printed, moved to ${target}`);
         notify('Snake Label', `Gedruckt: ${detected.description}`);
     } finally {
         await pdf.destroy();
+    }
+}
+
+// Keeps a label whose printer is unreachable until the printer answers again, instead
+// of giving up. Returns false if the PDF was removed in the meantime.
+async function sendWhenReachable(file, canvas, description) {
+    const name = path.basename(file);
+    for (let waiting = false; ; waiting = true) {
+        try {
+            await sendToPrinter(canvas);
+            await updatePending(name, null); // also clears a label resumed after a restart
+            return true;
+        } catch (e) {
+            if (!e.network) throw e;
+            if (!waiting) {
+                log(`wait   ${name}: ${e.message} — printing once the printer is reachable again`);
+                notify('Snake Label', `Drucker nicht erreichbar – ${description} wird gedruckt, sobald er wieder erreichbar ist.`);
+                await updatePending(name, await identity(file));
+            }
+        }
+        await waitForPrinter();
+        if (!(await exists(file))) {
+            log(`skip   ${name}: removed while waiting for the printer`);
+            await updatePending(name, null);
+            return false;
+        }
     }
 }
 
@@ -220,7 +270,7 @@ function watchFolder() {
     // Serialize print jobs so labels don't interleave on the printer
     let queue = Promise.resolve();
     const enqueue = (file) => {
-        queue = queue.then(() => processFile(file)).catch((e) => {
+        queue = queue.then(() => processFile(file, { waitForReconnect: true })).catch((e) => {
             log(`error  ${path.basename(file)}: ${e.message}`);
             notify('Snake Label – Fehler', `${path.basename(file)}: ${e.message}`);
         });
@@ -233,6 +283,17 @@ function watchFolder() {
         }
         log(`watching ${watchDir} (${known.size} existing PDFs ignored), printer ${printerUrl}${dryRun ? ' [dry-run]' : ''}`);
         if (!dryRun) waitForPrinter();
+
+        // Labels still waiting for the printer before the last restart
+        for (const [name, id] of dryRun ? [] : await readPending()) {
+            const file = path.join(watchDir, name);
+            if (known.get(name) === id) {
+                log(`resume ${name}: still waiting for the printer`);
+                enqueue(file);
+            } else {
+                await updatePending(name, null);
+            }
+        }
 
         watch(watchDir, (eventType, filename) => {
             if (!filename || !isPdf(filename)) return;
